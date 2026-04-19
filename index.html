@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,286 +32,382 @@
             max-width: 600px;
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             padding: 24px;
             box-sizing: border-box;
         }
 
-        h1 { color: var(--primary); text-align: center; margin-top: 0; }
-        .screen { display: none; }
-        .screen.active { display: block; }
-        
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; }
-        input[type="number"], input[type="text"] {
-            width: 100%; padding: 12px; border: 1px solid #ccc;
-            border-radius: 6px; font-size: 16px; box-sizing: border-box;
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
 
         .btn {
-            width: 100%; padding: 14px; background: var(--primary);
-            color: white; border: none; border-radius: 6px; font-size: 18px;
-            cursor: pointer; margin-top: 10px; transition: 0.2s;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
         }
-        .btn:hover { background: #357abd; }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
-        .btn-outline { background: transparent; color: var(--danger); border: 1px solid var(--danger); margin-top: 20px; padding: 10px; }
-        
-        .progress-bar { width: 100%; height: 10px; background: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--success); width: 0%; transition: 0.3s; }
-        
-        .stats { display: flex; justify-content: space-between; font-size: 14px; color: #666; margin-bottom: 10px; }
-        .question-box { text-align: center; margin: 30px 0; }
-        .q-type { font-size: 14px; color: #f39c12; font-weight: bold; margin-bottom: 8px; }
-        .question-word { font-size: 32px; font-weight: bold; word-wrap: break-word; }
-        
-        .choices-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
-        @media (min-width: 480px) { .choices-grid { grid-template-columns: 1fr 1fr; } }
-        
+
+        .btn:hover {
+            background: #357abd;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: 0.3s;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .question-box {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .q-type {
+            font-size: 14px;
+            color: #f39c12;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .question-word {
+            font-size: 32px;
+            font-weight: bold;
+            word-wrap: break-word;
+        }
+
+        .choices-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 480px) {
+            .choices-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         .choice-btn {
-            padding: 16px; background: #f8f9fa; border: 2px solid #e9ecef;
-            border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.2s;
+            padding: 16px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .choice-btn:hover { border-color: var(--primary); background: #eaf3fc; }
-        
-        .feedback { display: none; text-align: center; margin-top: 20px; padding: 15px; border-radius: 8px; font-weight: bold; }
-        .feedback.correct { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .feedback.wrong { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .correct-ans { font-size: 18px; margin-top: 10px; color: var(--danger); }
-        
-        #nextBtn { display: none; background: var(--success); }
+
+        .choice-btn:hover {
+            border-color: var(--primary);
+            background: #eaf3fc;
+        }
+
+        .feedback {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .feedback.correct {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.wrong {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .correct-ans {
+            font-size: 18px;
+            margin-top: 10px;
+            color: var(--danger);
+        }
+
+        #nextBtn {
+            display: none;
+            background: var(--success);
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <!-- 1: 設定画面 -->
-    <div id="settingsScreen" class="screen active">
-        <h1>英単語学習</h1>
-        <div id="loadingMsg" style="text-align:center; color: #666;">データを読み込んでいます...</div>
-        <div id="settingsForm" style="display:none;">
-            <p style="text-align:center;">全 <span id="totalWordCount">0</span> 単語読み込み完了</p>
-            <div class="form-group">
-                <label>出題開始番号</label>
-                <input type="number" id="startNum" value="1" min="1">
+    <div class="container">
+        <!-- 1: 設定画面 -->
+        <div id="settingsScreen" class="screen active">
+            <h1>英単語学習</h1>
+            <div id="loadingMsg" style="text-align:center; color: #666;">データを読み込んでいます...</div>
+            <div id="settingsForm" style="display:none;">
+                <p style="text-align:center;">全 <span id="totalWordCount">0</span> 単語読み込み完了</p>
+                <div class="form-group">
+                    <label>出題開始番号</label>
+                    <input type="number" id="startNum" value="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>出題終了番号</label>
+                    <input type="number" id="endNum" value="10" min="1">
+                </div>
+                <div style="font-size: 13px; color: #555; background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                    <strong>【ルール】</strong><br>
+                    ・英語→日本語(4択) が出題されます。<br>
+                    ・「連続2回正解」でその単語はクリア。<br>
+                    ・間違えると正解ノルマが「3回」に増えます。
+                </div>
+                <button class="btn" onclick="startStudy()">学習スタート</button>
+                <button class="btn btn-outline" onclick="resetData()">学習データをリセット</button>
             </div>
-            <div class="form-group">
-                <label>出題終了番号</label>
-                <input type="number" id="endNum" value="10" min="1">
+        </div>
+
+        <!-- 2: 学習画面 -->
+        <div id="studyScreen" class="screen">
+            <div class="stats">
+                <span id="progressText">進捗: 0 / 0</span>
+                <span id="normaText"></span>
             </div>
-            <div style="font-size: 13px; color: #555; background: #f8f9fa; padding: 12px; border-radius: 8px;">
-                <strong>【ルール】</strong><br>
-                ・英語→日本語(4択) / 日本語→英語(入力) が出題されます。<br>
-                ・「連続2回正解」でその単語はクリア。<br>
-                ・間違えると正解ノルマが「3回」に増えます。
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
             </div>
-            <button class="btn" onclick="startStudy()">学習スタート</button>
-            <button class="btn btn-outline" onclick="resetData()">学習データをリセット</button>
+
+            <div class="question-box">
+                <div id="qType" class="q-type"></div>
+                <div id="questionWord" class="question-word"></div>
+            </div>
+
+            <div id="choicesArea" class="choices-grid" style="display:none;">
+                <button class="choice-btn" id="choice0" onclick="checkChoice(0)"></button>
+                <button class="choice-btn" id="choice1" onclick="checkChoice(1)"></button>
+                <button class="choice-btn" id="choice2" onclick="checkChoice(2)"></button>
+                <button class="choice-btn" id="choice3" onclick="checkChoice(3)"></button>
+            </div>
+
+            <div id="feedbackBox" class="feedback">
+                <span id="feedbackText"></span>
+                <div id="correctAnswerDisplay" class="correct-ans"></div>
+            </div>
+            <button id="nextBtn" class="btn" onclick="nextQuestion()">次の問題へ</button>
+        </div>
+
+        <!-- 3: 結果画面 -->
+        <div id="resultScreen" class="screen" style="text-align:center;">
+            <h1>学習完了！</h1>
+            <p>指定範囲の単語をすべて覚えました！お疲れ様でした！🎉</p>
+            <button class="btn" onclick="location.reload()">スタート画面に戻る</button>
         </div>
     </div>
 
-    <!-- 2: 学習画面 -->
-    <div id="studyScreen" class="screen">
-        <div class="stats">
-            <span id="progressText">進捗: 0 / 0</span>
-            <span id="normaText"></span>
-        </div>
-        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+    <script>
+        let allWords = [], currentPool = [], state = {};
+        let currentQuestion = null, currentMode = "", isAnswered = false;
+        let initialCount = 0;
 
-        <div class="question-box">
-            <div id="qType" class="q-type"></div>
-            <div id="questionWord" class="question-word"></div>
-        </div>
+        // CSV読み込み
+        window.onload = async () => {
+            try {
+                const res = await fetch("英語A_小テスト用単語リスト_2026.csv");
+                if (!res.ok) throw new Error("fetch failed");
+                const text = await res.text();
 
-        <div id="choicesArea" class="choices-grid" style="display:none;">
-            <button class="choice-btn" id="choice0" onclick="checkChoice(0)"></button>
-            <button class="choice-btn" id="choice1" onclick="checkChoice(1)"></button>
-            <button class="choice-btn" id="choice2" onclick="checkChoice(2)"></button>
-            <button class="choice-btn" id="choice3" onclick="checkChoice(3)"></button>
-        </div>
-
-        <div id="typingArea" class="form-group" style="display:none; text-align:center;">
-            <input type="text" id="typeInput" placeholder="英語を入力してください" autocomplete="off" onkeypress="if(event.key==='Enter') checkTyping()">
-            <button class="btn" id="typeSubmitBtn" onclick="checkTyping()" style="margin-top:10px;">回答する</button>
-        </div>
-
-        <div id="feedbackBox" class="feedback">
-            <span id="feedbackText"></span>
-            <div id="correctAnswerDisplay" class="correct-ans"></div>
-        </div>
-        <button id="nextBtn" class="btn" onclick="nextQuestion()">次の問題へ</button>
-    </div>
-
-    <!-- 3: 結果画面 -->
-    <div id="resultScreen" class="screen" style="text-align:center;">
-        <h1>学習完了！</h1>
-        <p>指定範囲の単語をすべて覚えました！お疲れ様でした！🎉</p>
-        <button class="btn" onclick="location.reload()">スタート画面に戻る</button>
-    </div>
-</div>
-
-<script>
-    let allWords = [], currentPool = [], state = {};
-    let currentQuestion = null, currentMode = "", isAnswered = false;
-    let initialCount = 0;
-
-    // CSV読み込み
-    window.onload = async () => {
-        try {
-            const res = await fetch("英語A_小テスト用単語リスト_2026.csv");
-            if(!res.ok) throw new Error("fetch failed");
-            const text = await res.text();
-            
-            const lines = text.trim().split("\n");
-            for(let i=1; i<lines.length; i++) {
-                const p = lines[i].split(",");
-                if(p.length >= 3) {
-                    allWords.push({ id: parseInt(p[0]), en: p[1].trim(), ja: p[2].trim() });
+                const lines = text.trim().split("\n");
+                for (let i = 1; i < lines.length; i++) {
+                    const p = lines[i].split(",");
+                    if (p.length >= 3) {
+                        allWords.push({ id: parseInt(p[0]), en: p[1].trim(), ja: p[2].trim() });
+                    }
                 }
+
+                document.getElementById("loadingMsg").style.display = "none";
+                document.getElementById("settingsForm").style.display = "block";
+                document.getElementById("totalWordCount").textContent = allWords.length;
+                document.getElementById("endNum").value = Math.min(20, allWords.length);
+
+                const stored = localStorage.getItem("english_study_v1");
+                if (stored) state = JSON.parse(stored);
+            } catch (e) {
+                document.getElementById("loadingMsg").textContent = "CSVの読み込みに失敗しました。";
             }
-            
-            document.getElementById("loadingMsg").style.display = "none";
-            document.getElementById("settingsForm").style.display = "block";
-            document.getElementById("totalWordCount").textContent = allWords.length;
-            document.getElementById("endNum").value = Math.min(20, allWords.length);
-            
-            const stored = localStorage.getItem("english_study_v1");
-            if(stored) state = JSON.parse(stored);
-        } catch(e) {
-            document.getElementById("loadingMsg").textContent = "CSVの読み込みに失敗しました。";
-        }
-    };
+        };
 
-    function resetData() {
-        if(confirm("間違えた記録などをリセットしますか？")) {
-            localStorage.removeItem("english_study_v1");
-            state = {};
-            alert("リセットしました。");
-        }
-    }
-
-    function startStudy() {
-        let start = parseInt(document.getElementById("startNum").value);
-        let end = parseInt(document.getElementById("endNum").value);
-
-        currentPool = allWords.filter(w => w.id >= start && w.id <= end);
-        if(currentPool.length === 0) {
-            alert("指定した範囲に単語がありません。"); return;
+        function resetData() {
+            if (confirm("間違えた記録などをリセットしますか？")) {
+                localStorage.removeItem("english_study_v1");
+                state = {};
+                alert("リセットしました。");
+            }
         }
 
-        initialCount = currentPool.length;
-        currentPool.forEach(w => {
-            if(state[w.id] === undefined) state[w.id] = 2; // 初回は2回正解でクリア
-        });
+        function startStudy() {
+            let start = parseInt(document.getElementById("startNum").value);
+            let end = parseInt(document.getElementById("endNum").value);
 
-        document.getElementById("settingsScreen").classList.remove("active");
-        document.getElementById("studyScreen").classList.add("active");
-        nextQuestion();
-    }
+            currentPool = allWords.filter(w => w.id >= start && w.id <= end);
+            if (currentPool.length === 0) {
+                alert("指定した範囲に単語がありません。"); return;
+            }
 
-    function getUnfinished() { return currentPool.filter(w => state[w.id] > 0); }
+            initialCount = currentPool.length;
+            currentPool.forEach(w => {
+                if (state[w.id] === undefined) state[w.id] = 2; // 初回は2回正解でクリア
+            });
 
-    function nextQuestion() {
-        isAnswered = false;
-        document.getElementById("feedbackBox").className = "feedback";
-        document.getElementById("correctAnswerDisplay").innerHTML = "";
-        document.getElementById("nextBtn").style.display = "none";
-
-        let unf = getUnfinished();
-        if(unf.length === 0) {
-            document.getElementById("studyScreen").classList.remove("active");
-            document.getElementById("resultScreen").classList.add("active");
-            return;
+            document.getElementById("settingsScreen").classList.remove("active");
+            document.getElementById("studyScreen").classList.add("active");
+            nextQuestion();
         }
 
-        let solved = initialCount - unf.length;
-        document.getElementById("progressText").textContent = `完了: ${solved} / ${initialCount}`;
-        document.getElementById("progressFill").style.width = `${(solved/initialCount)*100}%`;
+        function getUnfinished() { return currentPool.filter(w => state[w.id] > 0); }
 
-        currentQuestion = unf[Math.floor(Math.random() * unf.length)];
-        currentMode = Math.random() < 0.5 ? "en-ja" : "ja-en";
+        function nextQuestion() {
+            isAnswered = false;
+            document.getElementById("feedbackBox").className = "feedback";
+            document.getElementById("correctAnswerDisplay").innerHTML = "";
+            document.getElementById("nextBtn").style.display = "none";
 
-        document.getElementById("normaText").textContent = `残り正解数: ${state[currentQuestion.id]}回`;
+            let unf = getUnfinished();
+            if (unf.length === 0) {
+                document.getElementById("studyScreen").classList.remove("active");
+                document.getElementById("resultScreen").classList.add("active");
+                return;
+            }
 
-        if(currentMode === "en-ja") {
+            let solved = initialCount - unf.length;
+            document.getElementById("progressText").textContent = `完了: ${solved} / ${initialCount}`;
+            document.getElementById("progressFill").style.width = `${(solved / initialCount) * 100}%`;
+
+            currentQuestion = unf[Math.floor(Math.random() * unf.length)];
+            currentMode = "en-ja"; // 英語→日本語 のみに固定
+
+            document.getElementById("normaText").textContent = `残り正解数: ${state[currentQuestion.id]}回`;
+
             document.getElementById("qType").textContent = "英語 → 日本語 (意味を選択)";
             document.getElementById("questionWord").textContent = currentQuestion.en;
             document.getElementById("choicesArea").style.display = "grid";
-            document.getElementById("typingArea").style.display = "none";
 
             let choices = [currentQuestion];
-            let dist = allWords.filter(w => w.id !== currentQuestion.id).sort(()=>0.5-Math.random()).slice(0,3);
-            choices = choices.concat(dist).sort(()=>0.5-Math.random());
+            let dist = allWords.filter(w => w.id !== currentQuestion.id).sort(() => 0.5 - Math.random()).slice(0, 3);
+            choices = choices.concat(dist).sort(() => 0.5 - Math.random());
 
-            for(let i=0; i<4; i++) {
-                let btn = document.getElementById("choice"+i);
+            for (let i = 0; i < 4; i++) {
+                let btn = document.getElementById("choice" + i);
                 btn.textContent = choices[i].ja;
                 btn.dataset.ans = choices[i].id;
                 btn.style.background = ""; btn.style.borderColor = "";
                 btn.disabled = false;
             }
-        } else {
-            document.getElementById("qType").textContent = "日本語 → 英語 (英語を入力)";
-            document.getElementById("questionWord").textContent = currentQuestion.ja;
-            document.getElementById("choicesArea").style.display = "none";
-            document.getElementById("typingArea").style.display = "block";
-
-            let inp = document.getElementById("typeInput");
-            inp.value = ""; inp.disabled = false;
-            document.getElementById("typeSubmitBtn").disabled = false;
-            setTimeout(() => inp.focus(), 100);
         }
-    }
 
-    function checkChoice(idx) {
-        if(isAnswered) return;
-        isAnswered = true;
-        let btn = document.getElementById("choice"+idx);
-        let correct = parseInt(btn.dataset.ans) === currentQuestion.id;
+        function checkChoice(idx) {
+            if (isAnswered) return;
+            isAnswered = true;
+            let btn = document.getElementById("choice" + idx);
+            let correct = parseInt(btn.dataset.ans) === currentQuestion.id;
 
-        if(correct) { btn.style.background = "#d4edda"; btn.style.borderColor = "#c3e6cb"; }
-        else {
-            btn.style.background = "#f8d7da"; btn.style.borderColor = "#f5c6cb";
-            for(let i=0; i<4; i++) {
-                let bn = document.getElementById("choice"+i);
-                if(parseInt(bn.dataset.ans) === currentQuestion.id) { bn.style.borderColor = "#2ecc71"; bn.style.borderWidth = "3px"; }
+            if (correct) { btn.style.background = "#d4edda"; btn.style.borderColor = "#c3e6cb"; }
+            else {
+                btn.style.background = "#f8d7da"; btn.style.borderColor = "#f5c6cb";
+                for (let i = 0; i < 4; i++) {
+                    let bn = document.getElementById("choice" + i);
+                    if (parseInt(bn.dataset.ans) === currentQuestion.id) { bn.style.borderColor = "#2ecc71"; bn.style.borderWidth = "3px"; }
+                }
             }
-        }
-        showResult(correct);
-    }
-
-    function checkTyping() {
-        if(isAnswered) return;
-        let inp = document.getElementById("typeInput");
-        let ans = inp.value.trim().toLowerCase();
-        if(ans === "") return;
-
-        isAnswered = true;
-        inp.disabled = true;
-        document.getElementById("typeSubmitBtn").disabled = true;
-
-        showResult(ans === currentQuestion.en.toLowerCase());
-    }
-
-    function showResult(isCorrect) {
-        let f = document.getElementById("feedbackBox");
-        if(isCorrect) {
-            f.className = "feedback correct";
-            document.getElementById("feedbackText").textContent = "正解！🎉";
-            state[currentQuestion.id] = Math.max(0, state[currentQuestion.id] - 1);
-        } else {
-            f.className = "feedback wrong";
-            document.getElementById("feedbackText").textContent = "不正解...😓";
-            document.getElementById("correctAnswerDisplay").innerHTML = `正解: <strong>${currentQuestion.en}</strong> (${currentQuestion.ja})`;
-            
-            // 間違えたら出題回数を増やす（3回残しにするか、現在+1） -> 要求通り後で数回+
-            state[currentQuestion.id] = Math.max(3, state[currentQuestion.id] + 1);
+            showResult(correct);
         }
 
-        localStorage.setItem("english_study_v1", JSON.stringify(state));
-        document.getElementById("nextBtn").style.display = "block";
-    }
-</script>
+        function showResult(isCorrect) {
+            let f = document.getElementById("feedbackBox");
+            if (isCorrect) {
+                f.className = "feedback correct";
+                document.getElementById("feedbackText").textContent = "正解！🎉";
+                state[currentQuestion.id] = Math.max(0, state[currentQuestion.id] - 1);
+            } else {
+                f.className = "feedback wrong";
+                document.getElementById("feedbackText").textContent = "不正解...😓";
+                document.getElementById("correctAnswerDisplay").innerHTML = `正解: <strong>${currentQuestion.en}</strong> (${currentQuestion.ja})`;
+
+                // 間違えたら出題回数を増やす（3回残しにするか、現在+1） -> 要求通り後で数回+
+                state[currentQuestion.id] = Math.max(3, state[currentQuestion.id] + 1);
+            }
+
+            localStorage.setItem("english_study_v1", JSON.stringify(state));
+            document.getElementById("nextBtn").style.display = "block";
+        }
+    </script>
 
 </body>
+
 </html>
