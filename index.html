@@ -203,6 +203,194 @@
             display: none;
             background: var(--success);
         }
+
+        /* モード・オプション選択 */
+        .segmented {
+            display: flex;
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .segmented input {
+            display: none;
+        }
+
+        .segmented label {
+            flex: 1;
+            margin: 0;
+            padding: 10px 4px;
+            text-align: center;
+            font-weight: normal;
+            font-size: 15px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .segmented label+input+label {
+            border-left: 1px solid var(--primary);
+        }
+
+        .segmented input:checked+label {
+            background: var(--primary);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .rule-box {
+            font-size: 13px;
+            color: #555;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        /* 単語帳 */
+        .flashcard {
+            perspective: 1000px;
+            height: 240px;
+            margin: 20px 0;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard.no-anim .card-inner {
+            transition: none;
+        }
+
+        .card-face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            box-sizing: border-box;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            text-align: center;
+        }
+
+        .card-front {
+            background: #fff;
+        }
+
+        .card-back {
+            background: #eaf3fc;
+            border-color: var(--primary);
+            transform: rotateY(180deg);
+        }
+
+        .card-no {
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .card-word {
+            font-size: 32px;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .card-sub {
+            font-size: 16px;
+            color: #666;
+            margin-top: 12px;
+        }
+
+        .card-hint {
+            position: absolute;
+            bottom: 10px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .round-msg {
+            text-align: center;
+            font-size: 14px;
+            color: #f39c12;
+            font-weight: bold;
+            min-height: 20px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .card-actions .btn {
+            margin-top: 0;
+        }
+
+        .btn-ng {
+            background: var(--danger);
+        }
+
+        .btn-ng:hover {
+            background: #c0392b;
+        }
+
+        .btn-ok {
+            background: var(--success);
+        }
+
+        .btn-ok:hover {
+            background: #27ae60;
+        }
+
+        .card-sub-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 6px 0;
+        }
+
+        .link-btn:disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .key-hint {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            margin-top: 12px;
+        }
+
+        @media (hover: none) {
+            .key-hint {
+                display: none;
+            }
+        }
     </style>
 </head>
 
@@ -223,14 +411,51 @@
                     <label>出題終了番号</label>
                     <input type="number" id="endNum" value="10" min="1">
                 </div>
-                <div style="font-size: 13px; color: #555; background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                <div class="form-group">
+                    <label>出題方法</label>
+                    <div class="segmented">
+                        <input type="radio" name="mode" id="modeQuiz" value="quiz" checked onchange="updateModeUI()">
+                        <label for="modeQuiz">4択クイズ</label>
+                        <input type="radio" name="mode" id="modeCard" value="card" onchange="updateModeUI()">
+                        <label for="modeCard">単語帳</label>
+                    </div>
+                </div>
+                <div id="cardOptions" style="display:none;">
+                    <div class="form-group">
+                        <label>表面に出すもの</label>
+                        <div class="segmented">
+                            <input type="radio" name="cardDir" id="dirEnJa" value="en-ja" checked>
+                            <label for="dirEnJa">英語 → 日本語</label>
+                            <input type="radio" name="cardDir" id="dirJaEn" value="ja-en">
+                            <label for="dirJaEn">日本語 → 英語</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>順番</label>
+                        <div class="segmented">
+                            <input type="radio" name="cardOrder" id="orderSeq" value="seq" checked>
+                            <label for="orderSeq">番号順</label>
+                            <input type="radio" name="cardOrder" id="orderShuffle" value="shuffle">
+                            <label for="orderShuffle">シャッフル</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="quizRule" class="rule-box">
                     <strong>【ルール】</strong><br>
                     ・英語→日本語(4択) が出題されます。<br>
                     ・「連続2回正解」でその単語はクリア。<br>
                     ・間違えると正解ノルマが「3回」に増えます。
                 </div>
-                <button class="btn" onclick="startStudy()">学習スタート</button>
-                <button class="btn btn-outline" onclick="resetData()">学習データをリセット</button>
+                <div id="cardRule" class="rule-box" style="display:none;">
+                    <strong>【ルール】</strong><br>
+                    ・カードをタップすると裏返って答えが見られます。<br>
+                    ・「覚えた」でその単語はクリア、「まだ」は次の周でもう一度出ます。<br>
+                    ・全部「覚えた」になるまで周回します。<br>
+                    ・裏返した後は、右スワイプ／→キーで「覚えた」、左スワイプ／←キーで「まだ」。<br>
+                    ・単語帳の結果は保存されません（4択クイズの記録とは別です）。
+                </div>
+                <button class="btn" onclick="startSelected()">学習スタート</button>
+                <button id="resetBtn" class="btn btn-outline" onclick="resetData()">学習データをリセット</button>
             </div>
         </div>
 
@@ -263,10 +488,47 @@
             <button id="nextBtn" class="btn" onclick="nextQuestion()">次の問題へ</button>
         </div>
 
+        <!-- 2b: 単語帳画面 -->
+        <div id="cardScreen" class="screen">
+            <div class="stats">
+                <span id="cardProgressText">覚えた: 0 / 0</span>
+                <span id="cardRoundText"></span>
+            </div>
+            <div class="progress-bar">
+                <div id="cardProgressFill" class="progress-fill"></div>
+            </div>
+            <div id="roundMsg" class="round-msg"></div>
+
+            <div id="flashcard" class="flashcard" onclick="flipCard()">
+                <div class="card-inner">
+                    <div class="card-face card-front">
+                        <div id="cardNoFront" class="card-no"></div>
+                        <div id="cardFrontWord" class="card-word"></div>
+                        <div class="card-hint">タップで裏返す</div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div id="cardNoBack" class="card-no"></div>
+                        <div id="cardBackWord" class="card-word"></div>
+                        <div id="cardBackSub" class="card-sub"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button id="ngBtn" class="btn btn-ng" onclick="rateCard(false)" disabled>✕ まだ</button>
+                <button id="okBtn" class="btn btn-ok" onclick="rateCard(true)" disabled>○ 覚えた</button>
+            </div>
+            <div class="card-sub-actions">
+                <button id="undoBtn" class="link-btn" onclick="undoCard()" disabled>↶ 1枚戻る</button>
+                <button class="link-btn" onclick="quitCards()">やめる</button>
+            </div>
+            <div class="key-hint">Space: 裏返す ／ ←: まだ ／ →: 覚えた ／ Backspace: 1枚戻る</div>
+        </div>
+
         <!-- 3: 結果画面 -->
         <div id="resultScreen" class="screen" style="text-align:center;">
             <h1>学習完了！</h1>
-            <p>指定範囲の単語をすべて覚えました！お疲れ様でした！🎉</p>
+            <p id="resultMsg">指定範囲の単語をすべて覚えました！お疲れ様でした！🎉</p>
             <button class="btn" onclick="location.reload()">スタート画面に戻る</button>
         </div>
     </div>
@@ -311,22 +573,46 @@
             }
         }
 
-        function startStudy() {
+        function showScreen(id) {
+            document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === id));
+        }
+
+        function getSelected(name) {
+            return document.querySelector(`input[name="${name}"]:checked`).value;
+        }
+
+        function updateModeUI() {
+            const isCard = getSelected("mode") === "card";
+            document.getElementById("cardOptions").style.display = isCard ? "block" : "none";
+            document.getElementById("cardRule").style.display = isCard ? "block" : "none";
+            document.getElementById("quizRule").style.display = isCard ? "none" : "block";
+            document.getElementById("resetBtn").style.display = isCard ? "none" : "";
+        }
+
+        function getRangeWords() {
             let start = parseInt(document.getElementById("startNum").value);
             let end = parseInt(document.getElementById("endNum").value);
 
-            currentPool = allWords.filter(w => w.id >= start && w.id <= end);
-            if (currentPool.length === 0) {
-                alert("指定した範囲に単語がありません。"); return;
-            }
+            let words = allWords.filter(w => w.id >= start && w.id <= end);
+            if (words.length === 0) alert("指定した範囲に単語がありません。");
+            return words;
+        }
+
+        function startSelected() {
+            if (getSelected("mode") === "card") startCards();
+            else startStudy();
+        }
+
+        function startStudy() {
+            currentPool = getRangeWords();
+            if (currentPool.length === 0) return;
 
             initialCount = currentPool.length;
             currentPool.forEach(w => {
                 if (state[w.id] === undefined) state[w.id] = 2; // 初回は2回正解でクリア
             });
 
-            document.getElementById("settingsScreen").classList.remove("active");
-            document.getElementById("studyScreen").classList.add("active");
+            showScreen("studyScreen");
             nextQuestion();
         }
 
@@ -340,8 +626,7 @@
 
             let unf = getUnfinished();
             if (unf.length === 0) {
-                document.getElementById("studyScreen").classList.remove("active");
-                document.getElementById("resultScreen").classList.add("active");
+                showScreen("resultScreen");
                 return;
             }
 
@@ -406,6 +691,139 @@
             localStorage.setItem("english_study_v1", JSON.stringify(state));
             document.getElementById("nextBtn").style.display = "block";
         }
+
+        // ===== 単語帳モード =====
+        let cardQueue = [], cardIndex = 0, cardRetry = [], cardHistory = [];
+        let cardKnown = 0, cardTotal = 0, cardRound = 1;
+        let cardDir = "en-ja", cardShuffle = false, cardFlipped = false;
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function orderCards(words) {
+            return cardShuffle ? shuffle(words.slice()) : words.slice().sort((a, b) => a.id - b.id);
+        }
+
+        function startCards() {
+            let words = getRangeWords();
+            if (words.length === 0) return;
+
+            cardDir = getSelected("cardDir");
+            cardShuffle = getSelected("cardOrder") === "shuffle";
+            cardQueue = orderCards(words);
+            cardIndex = 0; cardRetry = []; cardHistory = [];
+            cardKnown = 0; cardTotal = words.length; cardRound = 1;
+            document.getElementById("roundMsg").textContent = "";
+
+            showScreen("cardScreen");
+            showCard();
+        }
+
+        function showCard() {
+            let w = cardQueue[cardIndex];
+            let front = cardDir === "en-ja" ? w.en : w.ja;
+            let back = cardDir === "en-ja" ? w.ja : w.en;
+            let card = document.getElementById("flashcard");
+
+            // 裏→表の回転中に次の答えが見えないよう、アニメーションなしで表に戻してから中身を差し替える
+            card.classList.add("no-anim");
+            card.classList.remove("flipped");
+            cardFlipped = false;
+            document.getElementById("cardNoFront").textContent = `No.${w.id}`;
+            document.getElementById("cardNoBack").textContent = `No.${w.id}`;
+            document.getElementById("cardFrontWord").textContent = front;
+            document.getElementById("cardBackWord").textContent = back;
+            document.getElementById("cardBackSub").textContent = front;
+            void card.offsetWidth; // リフローさせて no-anim を確定
+            card.classList.remove("no-anim");
+
+            document.getElementById("okBtn").disabled = true;
+            document.getElementById("ngBtn").disabled = true;
+            document.getElementById("undoBtn").disabled = cardHistory.length === 0;
+
+            document.getElementById("cardProgressText").textContent = `覚えた: ${cardKnown} / ${cardTotal}`;
+            document.getElementById("cardProgressFill").style.width = `${(cardKnown / cardTotal) * 100}%`;
+            document.getElementById("cardRoundText").textContent = `${cardRound}周目 ${cardIndex + 1} / ${cardQueue.length}枚`;
+        }
+
+        function flipCard() {
+            cardFlipped = !cardFlipped;
+            document.getElementById("flashcard").classList.toggle("flipped", cardFlipped);
+            // 一度裏返したら評価できる
+            document.getElementById("okBtn").disabled = false;
+            document.getElementById("ngBtn").disabled = false;
+        }
+
+        function rateCard(known) {
+            if (document.getElementById("okBtn").disabled) return; // 裏返す前は評価しない
+
+            cardHistory.push({ queue: cardQueue, index: cardIndex, retry: cardRetry.slice(), known: cardKnown, round: cardRound });
+            if (known) cardKnown++;
+            else cardRetry.push(cardQueue[cardIndex]);
+            cardIndex++;
+            document.getElementById("roundMsg").textContent = "";
+
+            if (cardIndex < cardQueue.length) { showCard(); return; }
+
+            if (cardRetry.length === 0) {
+                document.getElementById("resultMsg").textContent = `${cardTotal}枚すべて覚えました！（${cardRound}周）お疲れ様でした！🎉`;
+                showScreen("resultScreen");
+                return;
+            }
+
+            // 「まだ」のカードだけで次の周へ
+            cardRound++;
+            document.getElementById("roundMsg").textContent = `${cardRound}周目：「まだ」の${cardRetry.length}枚をもう一度`;
+            cardQueue = orderCards(cardRetry);
+            cardIndex = 0; cardRetry = [];
+            showCard();
+        }
+
+        function undoCard() {
+            if (cardHistory.length === 0) return;
+            let h = cardHistory.pop();
+            cardQueue = h.queue; cardIndex = h.index; cardRetry = h.retry; cardKnown = h.known; cardRound = h.round;
+            document.getElementById("roundMsg").textContent = "";
+            showCard();
+        }
+
+        function quitCards() {
+            if (confirm("単語帳をやめてスタート画面に戻りますか？")) showScreen("settingsScreen");
+        }
+
+        document.addEventListener("keydown", e => {
+            if (!document.getElementById("cardScreen").classList.contains("active") || e.repeat) return;
+            let actions = {
+                " ": flipCard, "Enter": flipCard,
+                "ArrowRight": () => rateCard(true), "ArrowLeft": () => rateCard(false),
+                "Backspace": undoCard
+            };
+            if (!actions[e.key]) return;
+            e.preventDefault();
+            if (document.activeElement) document.activeElement.blur(); // フォーカス中のボタンが同時に押されるのを防ぐ
+            actions[e.key]();
+        });
+
+        // スマホ: 左右スワイプで評価
+        let touchX = null, touchY = null;
+        let flashcardEl = document.getElementById("flashcard");
+        flashcardEl.addEventListener("touchstart", e => {
+            touchX = e.touches[0].clientX; touchY = e.touches[0].clientY;
+        }, { passive: true });
+        flashcardEl.addEventListener("touchend", e => {
+            if (touchX === null) return;
+            let dx = e.changedTouches[0].clientX - touchX, dy = e.changedTouches[0].clientY - touchY;
+            touchX = null;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                e.preventDefault(); // スワイプ後のクリック（＝次のカードを裏返す）を抑止
+                rateCard(dx > 0);
+            }
+        });
     </script>
 
 </body>
