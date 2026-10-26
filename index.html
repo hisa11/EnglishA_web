@@ -246,6 +246,19 @@
             border-radius: 8px;
         }
 
+        .resume-box {
+            margin-top: 16px;
+            padding: 12px;
+            border: 1px solid var(--success);
+            border-radius: 8px;
+            background: #f0fbf4;
+            font-size: 14px;
+        }
+
+        .resume-info {
+            white-space: pre-line;
+        }
+
         /* 単語帳 */
         .flashcard {
             perspective: 1000px;
@@ -452,9 +465,13 @@
                     ・「覚えた」でその単語はクリア、「まだ」は次の周でもう一度出ます。<br>
                     ・全部「覚えた」になるまで周回します。<br>
                     ・裏返した後は、右スワイプ／→キーで「覚えた」、左スワイプ／←キーで「まだ」。<br>
-                    ・単語帳の結果は保存されません（4択クイズの記録とは別です）。
+                    ・途中経過はこのブラウザに保存され、次回「続きから再開」で再開できます（4択クイズの記録とは別です）。
                 </div>
-                <button class="btn" onclick="startSelected()">学習スタート</button>
+                <div id="resumeBox" class="resume-box" style="display:none;">
+                    <div id="resumeInfo" class="resume-info"></div>
+                    <button class="btn btn-ok" onclick="resumeCards()">続きから再開</button>
+                </div>
+                <button id="startBtn" class="btn" onclick="startSelected()">学習スタート</button>
                 <button id="resetBtn" class="btn btn-outline" onclick="resetData()">学習データをリセット</button>
             </div>
         </div>
@@ -557,6 +574,8 @@
                 document.getElementById("settingsForm").style.display = "block";
                 document.getElementById("totalWordCount").textContent = allWords.length;
                 document.getElementById("endNum").value = Math.min(20, allWords.length);
+                restoreSettings();
+                updateModeUI();
 
                 const stored = localStorage.getItem("english_study_v1");
                 if (stored) state = JSON.parse(stored);
@@ -565,7 +584,51 @@
             }
         };
 
+        // localStorage はプライベートモード等で使えないことがあるので、失敗しても止まらないようにする
+        function loadJSON(key) {
+            try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; }
+        }
+
+        function saveJSON(key, value) {
+            try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { }
+        }
+
+        function removeJSON(key) {
+            try { localStorage.removeItem(key); } catch (e) { }
+        }
+
+        const SETTINGS_KEY = "english_settings_v1";
+
+        function saveSettings() {
+            saveJSON(SETTINGS_KEY, {
+                start: document.getElementById("startNum").value,
+                end: document.getElementById("endNum").value,
+                mode: getSelected("mode"),
+                cardDir: getSelected("cardDir"),
+                cardOrder: getSelected("cardOrder")
+            });
+        }
+
+        function restoreSettings() {
+            let s = loadJSON(SETTINGS_KEY);
+            if (!s) return;
+            if (s.start) document.getElementById("startNum").value = s.start;
+            if (s.end) document.getElementById("endNum").value = s.end;
+            for (let name of ["mode", "cardDir", "cardOrder"]) {
+                let radio = document.querySelector(`input[name="${name}"][value="${s[name]}"]`);
+                if (radio) radio.checked = true;
+            }
+        }
+
         function resetData() {
+            if (getSelected("mode") === "card") {
+                if (confirm("単語帳の途中経過をリセットしますか？")) {
+                    removeJSON(CARD_KEY);
+                    updateResumeBox();
+                    alert("リセットしました。");
+                }
+                return;
+            }
             if (confirm("間違えた記録などをリセットしますか？")) {
                 localStorage.removeItem("english_study_v1");
                 state = {};
@@ -586,7 +649,7 @@
             document.getElementById("cardOptions").style.display = isCard ? "block" : "none";
             document.getElementById("cardRule").style.display = isCard ? "block" : "none";
             document.getElementById("quizRule").style.display = isCard ? "none" : "block";
-            document.getElementById("resetBtn").style.display = isCard ? "none" : "";
+            updateResumeBox();
         }
 
         function getRangeWords() {
@@ -599,6 +662,7 @@
         }
 
         function startSelected() {
+            saveSettings();
             if (getSelected("mode") === "card") startCards();
             else startStudy();
         }
@@ -694,8 +758,51 @@
 
         // ===== 単語帳モード =====
         let cardQueue = [], cardIndex = 0, cardRetry = [], cardHistory = [];
-        let cardKnown = 0, cardTotal = 0, cardRound = 1;
+        let cardKnown = 0, cardTotal = 0, cardRound = 1, cardRange = [0, 0];
         let cardDir = "en-ja", cardShuffle = false, cardFlipped = false;
+        const CARD_KEY = "english_flashcard_v1";
+
+        function saveCardSession() {
+            saveJSON(CARD_KEY, {
+                range: cardRange, dir: cardDir, shuffle: cardShuffle,
+                queue: cardQueue.map(w => w.id), index: cardIndex, retry: cardRetry.map(w => w.id),
+                known: cardKnown, total: cardTotal, round: cardRound
+            });
+        }
+
+        function loadCardSession() {
+            let s = loadJSON(CARD_KEY);
+            if (!s || !Array.isArray(s.queue) || !Array.isArray(s.retry) || !Array.isArray(s.range)) return null;
+            let byId = new Map(allWords.map(w => [w.id, w]));
+            let queue = s.queue.map(id => byId.get(id)), retry = s.retry.map(id => byId.get(id));
+            // CSV が変わって見つからない単語がある場合は、続きを使わない
+            if (queue.includes(undefined) || retry.includes(undefined) || !(s.index >= 0 && s.index < queue.length)) return null;
+            return { ...s, queue, retry };
+        }
+
+        function updateResumeBox() {
+            let s = getSelected("mode") === "card" ? loadCardSession() : null;
+            document.getElementById("resumeBox").style.display = s ? "block" : "none";
+            document.getElementById("startBtn").textContent = s ? "新しく始める" : "学習スタート";
+            if (s) {
+                document.getElementById("resumeInfo").textContent =
+                    `前回の続き：No.${s.range[0]}〜${s.range[1]}（${s.dir === "en-ja" ? "英→日" : "日→英"}）\n` +
+                    `覚えた ${s.known} / ${s.total}・${s.round}周目 ${s.index + 1}枚目から`;
+            }
+        }
+
+        function resumeCards() {
+            let s = loadCardSession();
+            if (!s) { updateResumeBox(); return; }
+
+            cardQueue = s.queue; cardIndex = s.index; cardRetry = s.retry; cardHistory = [];
+            cardKnown = s.known; cardTotal = s.total; cardRound = s.round;
+            cardRange = s.range; cardDir = s.dir; cardShuffle = s.shuffle;
+            document.getElementById("roundMsg").textContent = "";
+
+            showScreen("cardScreen");
+            showCard();
+        }
 
         function shuffle(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
@@ -712,12 +819,14 @@
         function startCards() {
             let words = getRangeWords();
             if (words.length === 0) return;
+            if (loadCardSession() && !confirm("保存されている前回の続きは消えます。新しく始めますか？")) return;
 
             cardDir = getSelected("cardDir");
             cardShuffle = getSelected("cardOrder") === "shuffle";
             cardQueue = orderCards(words);
             cardIndex = 0; cardRetry = []; cardHistory = [];
             cardKnown = 0; cardTotal = words.length; cardRound = 1;
+            cardRange = [Math.min(...words.map(w => w.id)), Math.max(...words.map(w => w.id))];
             document.getElementById("roundMsg").textContent = "";
 
             showScreen("cardScreen");
@@ -725,6 +834,8 @@
         }
 
         function showCard() {
+            saveCardSession(); // 状態が変わるたびに呼ばれるので、ここで保存する
+
             let w = cardQueue[cardIndex];
             let front = cardDir === "en-ja" ? w.en : w.ja;
             let back = cardDir === "en-ja" ? w.ja : w.en;
@@ -771,6 +882,7 @@
             if (cardIndex < cardQueue.length) { showCard(); return; }
 
             if (cardRetry.length === 0) {
+                removeJSON(CARD_KEY);
                 document.getElementById("resultMsg").textContent = `${cardTotal}枚すべて覚えました！（${cardRound}周）お疲れ様でした！🎉`;
                 showScreen("resultScreen");
                 return;
@@ -793,7 +905,9 @@
         }
 
         function quitCards() {
-            if (confirm("単語帳をやめてスタート画面に戻りますか？")) showScreen("settingsScreen");
+            if (!confirm("単語帳を中断してスタート画面に戻りますか？（続きは保存されます）")) return;
+            showScreen("settingsScreen");
+            updateResumeBox();
         }
 
         document.addEventListener("keydown", e => {
